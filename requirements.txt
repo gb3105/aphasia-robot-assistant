@@ -1,0 +1,9 @@
+alpha-mini-rug==0.7.3.2
+autobahn==25.12.2
+google-genai==1.65.0
+matplotlib==3.10.8
+pip-chill==1.0.3
+pyopenssl==25.3.0
+service-identity==24.2.0
+speechrecognition==3.14.5
+twisted==25.5.0
