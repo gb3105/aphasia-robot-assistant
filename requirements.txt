@@ -7,3 +7,22 @@ pyopenssl==25.3.0
 service-identity==24.2.0
 speechrecognition==3.14.5
 twisted==25.5.0
+
+
+# Core ML
+torch
+torchaudio
+
+# Whisper (OpenAI)
+openai-whisper
+
+# Audio recording from laptop mic
+sounddevice
+soundfile
+numpy
+
+# Keyboard listener for therapist button
+pynput
+
+# Utilities
+scipy
