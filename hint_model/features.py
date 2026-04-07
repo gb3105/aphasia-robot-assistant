@@ -44,6 +44,8 @@ class FeatureExtractor:
         self.latest_features = None
 
         self.running = False
+
+        self.mute = False
     
     def _recoding_callback(self, indata, frames, time_info, status):
         """
@@ -73,6 +75,10 @@ class FeatureExtractor:
                 if len(accumulated) >= STEP_SAMPLES:
                     step = accumulated[:STEP_SAMPLES]
                     accumulated = accumulated[STEP_SAMPLES:]
+
+                    # if mute is enabled, we skip the process
+                    if self.mute:
+                        continue
 
                     # Slide the buffer: drop pldest 1 second, append newest 1 second
                     self.audio_buffer = np.roll(self.audio_buffer, -STEP_SAMPLES)
@@ -169,3 +175,14 @@ class FeatureExtractor:
         if self.latest_features is None:
             return None, None
         return self.latest_features
+    
+    def robot_speaking_start(self):
+        """Call this when the robot starts speaking to avoid picking up its own voice."""
+        self.mute = True
+
+        self.last_speech_time = time.time() # reset silence timer when robot starts speaking
+
+    def robot_speaking_end(self):
+        """Call this when the robot stops speaking."""
+        self.mute = False
+        self.last_speech_time = time.time() # reset silence timer when robot stops speaking
