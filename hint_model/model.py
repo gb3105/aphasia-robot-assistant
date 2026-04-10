@@ -28,7 +28,7 @@ class HintPolicyNetwork(nn.Module):
         n_actions: number of possible actions (4)
         dropout: randomly zeros out neurons during training to prevent overfitting
         """
-        super(HintPolicyNetwork).__init__()
+        super(HintPolicyNetwork, self).__init__()
 
         # Feature Compressor: MLP to reduce 517 features down to 128
         self.feature_mlp = nn.Sequential(
@@ -97,4 +97,30 @@ class HintPolicyNetwork(nn.Module):
         log_prob = dist.log_prob(action) # log probability of the selected action (useful for training)
         return action.item(), log_prob, probs
     
-    
+
+def get_device():
+    if torch.backends.mps.is_available():
+        return torch.device("mps")
+    elif torch.cuda.is_available():
+        return torch.device("cuda")
+    else:
+        return torch.device("cpu")
+
+
+if __name__ == "__main__":
+    device = get_device()
+    print(f"Using device: {device}")
+
+    # Create the network
+    model = HintPolicyNetwork().to(device)
+    print(f"Model created successfully")
+    print(f"Total parameters: {sum(p.numel() for p in model.parameters()):,}")
+
+    # Create a fake input: batch=1, sequence=5 timesteps, features=517
+    dummy_input = torch.randn(1, SEQUENCE_LENGTH, INPUT_SIZE).to(device)
+
+    # Run a forward pass
+    action_idx, log_prob, probs = model.select_action(dummy_input)
+    print(f"\nDummy forward pass:")
+    print(f"  Chosen action: {ACTION_LABELS[action_idx]} (index {action_idx})")
+    print(f"  Probabilities: { {ACTION_LABELS[i]: f'{p:.3f}' for i, p in enumerate(probs[0].tolist())} }")
