@@ -1,3 +1,5 @@
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning)
 import numpy as np
 import sounddevice as sd
 import whisper

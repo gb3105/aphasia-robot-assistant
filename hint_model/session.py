@@ -27,7 +27,7 @@ class SessionManager:
         # Background thread that feeds features into the trainer every second
         self._tick_thread = None
 
-    def start_session(self):
+    def start(self):
         """
         Loads the patients model, starts the feature extractor, 
         starts the keyboard listener (in in training mode) 
@@ -150,3 +150,35 @@ class SessionManager:
             _, text = result
             return text
         return ""
+
+
+if __name__ == "__main__":
+    # Test training mode
+    session = SessionManager(
+        patient_id="test_patient",
+        language="en",
+        model_size="base",
+        training_mode=True
+    )
+
+    session.start()
+
+    print("Session running for 20 seconds.")
+    print("Press 1, 2, or 3 to simulate therapist button presses.\n")
+
+    for i in range(20):
+        time.sleep(1)
+
+        # Check for therapist input
+        action = session.tick()
+        if action is not None:
+            print(f"[Test] tick() returned action: '{ACTION_LABELS[action]}'")
+            print(f"[Test] → Robot would now give hint: {ACTION_LABELS[action]}")
+
+        # Print transcript every 5 seconds
+        if (i + 1) % 5 == 0:
+            transcript = session.get_last_transcript()
+            print(f"[Test] Latest transcript: '{transcript}'")
+
+    session.end(save=False)  # save=False so we don't overwrite test_patient.pt
+    print("\nTest complete.")
